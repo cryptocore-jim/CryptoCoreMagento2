@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="CryptoCore_CryptoPayment::main_menu" title="CryptoCore"
+             module="CryptoCore_CryptoPayment" sortOrder="100"
+             resource="CryptoCore_CryptoPayment::simplenews" />
+        <add id="CryptoCore_CryptoPayment::manage_configuration" title="CryptoCore Configuration"
+             module="CryptoCore_CryptoPayment" sortOrder="1" parent="CryptoCore_CryptoPayment::main_menu"
+             action="adminhtml/system_config/edit/section/cryptocoresettings" resource="CryptoCore_CryptoPayment::manage_configuration" />
+    </menu>
+</config>

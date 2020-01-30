@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="CryptoPaymentFacade" type="CryptoCore\CryptoPayment\Model\Cryptopayment">
+        <arguments>
+            <argument name="code" xsi:type="const">CryptoCore\CryptoPayment\Model\Ui\ConfigProvider::CODE_PAYMENT</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">CryptoCore\CryptoPayment\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">CryptoPaymentValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">CryptoPaymentCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="CryptoPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">CryptoCore\CryptoPayment\Model\Ui\ConfigProvider::CODE_PAYMENT</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="CryptoPaymentCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">CryptoPaymentAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">CryptoPaymentCaptureCommand</item>
+                <item name="void" xsi:type="string">CryptoPaymentVoidCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="CryptoPaymentAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand"></virtualType>
+	
+    <type name="CryptoCore\CryptoPayment\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Capture command -->
+    <virtualType name="CryptoPaymentCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand"></virtualType>
+
+    <!-- Capture Request -->
+    <type name="CryptoCore\CryptoPayment\Gateway\Request\CaptureRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Void command -->
+    <virtualType name="CryptoPaymentVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand"></virtualType>
+
+    <!-- Void Request -->
+    <type name="CryptoCore\CryptoPayment\Gateway\Request\VoidRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="CryptoPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">CryptoPaymentConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CryptoPaymentConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="CryptoCore\CryptoPayment\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </type>
+
+</config>
