@@ -30,6 +30,16 @@
                     <label>Connection timeout to CryptoCore server in seconds</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
+                <field id="allowed" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Allowed cryptocurrencies (Use comma to separate)</label>
+                </field>
+                <field id="convert" translate="label" type="select" sortOrder="130" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Convert fiat to crypto</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="fiat" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Fiat currency (provide your webshop currency)</label>
+                </field>
             </group>
         </section>
     </system>

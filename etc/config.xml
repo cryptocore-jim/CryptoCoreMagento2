@@ -21,6 +21,9 @@
                 <active>0</active>
                 <currentmode>test</currentmode>
                 <timeout>30</timeout>
+                <allowed>BTC</allowed>
+                <convert>1</convert>
+                <fiat>USD</fiat>
             </ccoresetup>
         </ccoresettings>
     </default>

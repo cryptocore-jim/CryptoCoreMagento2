@@ -1,0 +1,58 @@
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label class="label" data-bind="attr: {'for': getCode()}">
+            <img data-bind="attr: {src: getLogo()}" style="width: 32px; height: 32px; vertical-align: middle"/>&nbsp;<span data-bind="text: getTitle()"></span>
+        </label>
+    </div>
+
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="field required">
+            <label data-bind="attr: {for: getCode() + '_payment_information'}" class="label">
+                <b style="font-size: 16px"><!-- ko i18n: 'Select cryptocurrency to pay'--><!-- /ko --></b>
+            </label>
+            <div class="control" style="margin: 8px 0 0 0">
+                <div data-bind="foreach: getCryptoCurencies()" >
+                    <label>
+                        <input type="radio"
+                               name="payment[cryptocurrency]"
+                               data-bind="
+                                  attr: {value: value},
+                                  checked: $parent.default_crypto" />
+                        <span data-bind="text: label"></span> (<span data-bind="text: value"></span>)
+                    </label><br />
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order'), disabled: (getBillingAddress() == null) ? 'disabled' : null }
+                        ">
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

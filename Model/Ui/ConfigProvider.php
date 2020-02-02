@@ -55,14 +55,17 @@ final class ConfigProvider implements ConfigProviderInterface
 
     public function getConfig()
     {
-        $cryptoAvailable = Array();
+        $cryptoAvailable = Array(
+            Array('value' => 'BTC_TST', 'text' => 'Bitcoin (Testnet)', 'amount' => 0.01),
+            Array('value' => 'OTO', 'text' => 'Otocash', 'amount' => 1.01)
+        );
 
         return [
             'payment' => [
                 self::CODE_PAYMENT => [
                     'redirectUrl' => $this->methodInstanceCryptoCore->getConfigData('order_place_redirect_url'),
-                    'crypto' => $cryptoAvailable,
-                    'default_crypto' => "BTC",
+                    'cryptocurrencies' => $cryptoAvailable,
+                    'default_crypto' => "BTC_TST",
                     'logo' => $this->getCryptoCoreLogo()
                 ]
             ]

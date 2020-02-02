@@ -83,7 +83,7 @@ class Cryptopayment extends \CryptoCore\CryptoPayment\Model\Cryptocorepayment
     public function getConfigData($field, $storeId = null)
     {
         if ($field == 'order_place_redirect_url') {
-            return 'cryptopayment/checkout/startpayment';
+            return 'cryptocore/checkout/startpayment';
         }
         return parent::getConfigData($field, $storeId);
     }
