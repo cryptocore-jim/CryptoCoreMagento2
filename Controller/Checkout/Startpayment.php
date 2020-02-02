@@ -11,6 +11,7 @@ class Startpayment extends Action
      * @var DataHelper
      */
     protected $_dataHelper;
+
     /**
      * Index constructor.
      * @param \Magento\Framework\App\Action\Context $context
@@ -28,11 +29,28 @@ class Startpayment extends Action
     public function execute()
     {
         $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
+        if ($order->getId() == null) {
+            exit('aaa');
+        }
         /* @var $payment \Magento\Sales\Model\Order\Payment */
         $payment = $order->getPayment();
         $resultRedirect = $this->resultRedirectFactory->create();
         try {
-            $resultRedirect->setUrl('https://gateway.ccore.online/test');
+            $ccorder = $this->_dataHelper->createNewOrder($order);
+            $response = $this->_dataHelper->_communicator->sendRequest($ccorder,
+                $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+            if ((int)$response[0] == 200 && $response[1] != '') {
+                $ccpayment = json_decode($response[1]);
+                if (!empty($ccpayment->payment_id)) {
+                    $redirectUrl = $this->_dataHelper->_communicator->getRedirectUrl($ccpayment->payment_id);
+                    $resultRedirect->setUrl($redirectUrl);
+                } else {
+                    throw new \Exception("payment_id is empty");
+                }
+
+            } else {
+                throw new \Exception("Status response: " . $response[0]);
+            }
         } catch (\Exception $e) {
             $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
             $error = __("Unexpected error");

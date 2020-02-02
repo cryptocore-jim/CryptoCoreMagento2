@@ -21,6 +21,7 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
     public $_objectManager;
     public $_configLoader;
     public $_customerMetadata;
+    public $_communicator;
 
     /**
      * @var \Psr\Log\LoggerInterface
@@ -38,7 +39,7 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Backend\Model\Menu\Filter\IteratorFactory $iteratorFactory,
         \Magento\Backend\Block\Menu $blockMenu,
         \Magento\Backend\Model\UrlInterface $url,
-        \Magento\Store\Model\StoreManager $storeManager,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Directory\Model\Config\Source\Country $countryHelper,
         \Magento\Framework\Locale\Resolver $resolver,
@@ -46,7 +47,8 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\ObjectManager\ConfigLoaderInterface $configLoader,
         \Magento\Customer\Api\CustomerMetadataInterface $customerMetadata,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        \CryptoCore\CryptoPayment\Helper\Api\CryptocoreCommunicator $communicator
     )
     {
 
@@ -63,6 +65,23 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_blockMenu = $blockMenu;
         $this->_url = $url;
         $this->quoteRepository = $quoteRepository;
+        $this->_communicator = $communicator;
+    }
+
+    function createNewOrder(\Magento\Sales\Model\Order $order)
+    {
+        $cccommunicator = $this->_communicator;
+        $baseUrl = $this->_storeManager->getStore()->getBaseUrl();
+        $ccorder = new \CryptoCore\CryptoPayment\Helper\Api\CryptoCoreNewOrder();
+        $ccorder->amount = (float)$order->getGrandTotal();
+        $ccorder->currency_code = $order->getOrderCurrencyCode();
+        $ccorder->order_id = $order->getIncrementId();
+        $ccorder->result_url = $baseUrl."cryptocore/checkout/statuspayment";
+        $ccorder->user_return_url = $baseUrl."cryptocore/checkout/finishpayment";
+        $ccorder->user_id = $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $signature = $cccommunicator->newOrderSignature($ccorder, $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
+        $ccorder->usersignature = $signature;
+        return json_encode($ccorder);
     }
 
     function nullToString($str) {
