@@ -71,9 +71,12 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
         $signature = $jsonData->signature;
         $userssecretkey = $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if (sha1($result.$order_id.$userssecretkey) == $signature) {
-
             $orderData = $this->getOrderIdByIncrementId($order_id);
             foreach ($orderData as $order) {
+                if ($order->getStatus() != "pending_cryptocore") {
+                    header('HTTP/1.0 403 Forbidden');
+                    exit();
+                }
                 if ($result == "fail") {
                     $order->registerCancellation("Failed to pay with order")->save();
                 } else if ($result == "success") {
