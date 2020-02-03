@@ -70,12 +70,10 @@ class InstallData implements InstallDataInterface
             ]
         );
 
-
-
         $data = [];
         $dataSate = [];
         $statuses = [
-            'pending_cryptocore' => Array( "name" => __('CryptoCore wait for payment'), 'is_default' => 1, "visible_on_front" => 1, "state" => "pending_payment"),
+            'pending_cryptocore' => Array( "name" => __('CryptoCore wait for payment'), 'is_default' => 1, "visible_on_front" => 1, "state" => "new"),
             'cryptocore_confirmed'  => Array( "name" =>__('CryptoCore confirmed'), 'is_default' => 0, "visible_on_front" => 1, "state" => "processing"),
         ];
         foreach ($statuses as $code => $info) {

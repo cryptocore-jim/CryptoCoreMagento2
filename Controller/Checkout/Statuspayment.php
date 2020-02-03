@@ -3,14 +3,21 @@ namespace CryptoCore\CryptoPayment\Controller\Checkout;
 
 use CryptoCore\CryptoPayment\Helper\DataHelper;
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
 
-class Startpayment extends Action
+class Statuspayment extends Action implements CsrfAwareActionInterface
 {
     protected $_config;
     /**
      * @var DataHelper
      */
     protected $_dataHelper;
+    protected $_searchCriteriaBuilder;
+    protected $_orderRepository;
 
     /**
      * Index constructor.
@@ -19,15 +26,78 @@ class Startpayment extends Action
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        OrderRepositoryInterface $orderRepository,
         DataHelper $helper
     )
     {
         $this->_dataHelper = $helper;
+        $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->_orderRepository = $orderRepository;
         parent::__construct($context);
+    }
+
+    private function getOrderIdByIncrementId($incrementId)
+    {
+        $searchCriteria = $this->_searchCriteriaBuilder
+            ->addFilter('increment_id', $incrementId)->create();
+        $orderData = null;
+        try {
+            $order = $this->_orderRepository->getList($searchCriteria);
+            if ($order->getTotalCount()) {
+                $orderData = $order->getItems();
+            }
+        } catch (\Exception $exception)  {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
+        return $orderData;
     }
 
     public function execute()
     {
+        $post = $this->getRequest()->getContent();
+        $jsonData = json_decode($post);
+        if (empty($jsonData->result) || empty($jsonData->order_id) || empty($jsonData->signature)) {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
+        $result = $jsonData->result;
+        if ($result != "fail" && $result != "success") {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
+        $order_id = $jsonData->order_id;
+        $signature = $jsonData->signature;
+        $userssecretkey = $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if (sha1($result.$order_id.$userssecretkey) == $signature) {
+
+            $orderData = $this->getOrderIdByIncrementId($order_id);
+            foreach ($orderData as $order) {
+                if ($result == "fail") {
+                    $order->registerCancellation("Failed to pay with order")->save();
+                } else if ($result == "success") {
+                    $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
+                    $order->setStatus("cryptocore_confirmed");
+                    $order->save();
+                }
+            }
+            header("HTTP/1.0 200 OK");
+            exit();
+        }
+        else {
+            header('HTTP/1.0 403 Forbidden');
+            exit();
+        }
+    }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
         return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
     }
 }
