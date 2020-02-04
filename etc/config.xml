@@ -18,6 +18,7 @@
         </payment>
         <ccoresettings>
             <ccoresetup>
+                <title>Pay with CryptoCurrency</title>
                 <active>0</active>
                 <currentmode>test</currentmode>
                 <timeout>30</timeout>

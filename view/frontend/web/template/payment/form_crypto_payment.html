@@ -26,11 +26,11 @@
                 <div data-bind="foreach: getCryptoCurencies()" >
                     <label>
                         <input type="radio"
-                               name="payment[cryptocurrency]"
+                               name="payment[selected_crypto]"
                                data-bind="
                                   attr: {value: value},
-                                  checked: $parent.default_crypto" />
-                        <span data-bind="text: label"></span> (<span data-bind="text: value"></span>)
+                                  checked: $parent.selectedCrypto" />
+                        <span data-bind="text: label"></span> (<span data-bind="text: amount"></span> <span data-bind="text: value"></span>)
                     </label><br />
                 </div>
             </div>

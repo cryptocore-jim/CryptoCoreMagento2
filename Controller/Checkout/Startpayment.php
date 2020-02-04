@@ -30,13 +30,13 @@ class Startpayment extends Action
     {
         $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
         if ($order->getId() == null) {
-            exit('aaa');
+            exit();
         }
         /* @var $payment \Magento\Sales\Model\Order\Payment */
         $payment = $order->getPayment();
         $resultRedirect = $this->resultRedirectFactory->create();
         try {
-            $ccorder = $this->_dataHelper->createNewOrder($order);
+            $ccorder = $this->_dataHelper->createNewOrder($order, $payment->getAdditionalInformation('selected_crypto'));
             $response = $this->_dataHelper->_communicator->sendRequest($ccorder,
                 $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
             if ((int)$response[0] == 200 && $response[1] != '') {

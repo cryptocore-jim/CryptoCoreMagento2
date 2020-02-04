@@ -90,21 +90,35 @@ class Cryptopayment extends \CryptoCore\CryptoPayment\Model\Cryptocorepayment
 
     public function isAvailable(CartInterface $quote = null)
     {
-        return true;
+        return $this->_scopeConfig->getValue("ccoresettings/ccoresetup/active", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function getTitle()
     {
-        return "XXXX";//$this->_scopeConfig->getValue("cryptocoresettings/cryptocore_setup/title", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue("ccoresettings/ccoresetup/title", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function assignData(\Magento\Framework\DataObject $data)
     {
+        $dataKey = $data->getDataByKey('additional_data');
+        $payment = $this->getInfoInstance();
+        $payment->setAdditionalInformation('selected_crypto', null);
+        if (isset($dataKey['selected_crypto'])) {
+            $payment->setAdditionalInformation('selected_crypto', $dataKey['selected_crypto']);
+        }
+        $payment->setAdditionalInformation("webshop_profile_id", $this->getStore());
         return $this;
     }
 
     public function validate()
     {
+        $payment = $this->getInfoInstance();
+        $this->validateCustomFields($payment);
+        if ($payment->getAdditionalInformation('selected_crypto') == null) {
+            throw new LocalizedException(
+                __("Cryptocurrency not selected")
+            );
+        }
         return $this;
     }
 

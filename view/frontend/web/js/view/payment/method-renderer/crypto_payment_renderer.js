@@ -12,13 +12,13 @@ define(
             redirectAfterPlaceOrder: false,
             defaults: {
                 template: 'CryptoCore_CryptoPayment/payment/form_crypto_payment',
-                default_crypto: window.checkoutConfig.payment.crypto_payment.default_crypto
+                selectedCrypto: window.checkoutConfig.payment.crypto_payment.default_crypto
             },
 
             initObservable: function () {
                 this._super()
                     .observe([
-                        'cryptocorrency'
+                        'selectedCrypto'
                     ]);
                 return this;
             },
@@ -28,6 +28,15 @@ define(
                 this.selectPaymentMethod();
                 jquery.mage.redirect(url.build(window.checkoutConfig.payment.crypto_payment.redirectUrl));
                 return false;
+            },
+
+            getData: function () {
+                return {
+                    'method': this.item.method,
+                    'additional_data': {
+                        'selected_crypto': this.selectedCrypto()
+                    }
+                };
             },
 
             getCode: function () {
@@ -53,11 +62,12 @@ define(
             getCryptoCurencies: function () {
                 var list = [];
                 for (var i = 0; i < window.checkoutConfig.payment.crypto_payment.cryptocurrencies.length; i++) {
-                   var value = window.checkoutConfig.payment.crypto_payment.cryptocurrencies[i];
-                   list.push(
+                    var value = window.checkoutConfig.payment.crypto_payment.cryptocurrencies[i];
+                    list.push(
                         {
                             'value': value.value,
-                            'label': value.text
+                            'label': value.text,
+                            'amount': value.amount
                         }
                     );
                 }

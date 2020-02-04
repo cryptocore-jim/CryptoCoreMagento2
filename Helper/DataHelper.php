@@ -68,13 +68,16 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_communicator = $communicator;
     }
 
-    function createNewOrder(\Magento\Sales\Model\Order $order)
+    function createNewOrder(\Magento\Sales\Model\Order $order, $selectedCrypto)
     {
         $cccommunicator = $this->_communicator;
         $baseUrl = $this->_storeManager->getStore()->getBaseUrl();
         $ccorder = new \CryptoCore\CryptoPayment\Helper\Api\CryptoCoreNewOrder();
         $ccorder->amount = (float)$order->getGrandTotal();
         $ccorder->currency_code = $order->getOrderCurrencyCode();
+        if (!empty($selectedCrypto)) {
+            $ccorder->payment_currency_code = $selectedCrypto;
+        }
         $ccorder->order_id = $order->getIncrementId();
         $ccorder->result_url = $baseUrl."cryptocore/checkout/statuspayment";
         $ccorder->user_return_url = $baseUrl."cryptocore/checkout/finishpayment";
