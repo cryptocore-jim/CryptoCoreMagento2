@@ -43,6 +43,13 @@ define(
                 return 'crypto_payment';
             },
 
+            isSelectCurrency: function () {
+                if (window.checkoutConfig.payment.crypto_payment.select_currency == 1) {
+                    return true
+                }
+                return false;
+            },
+
             getBillingAddress: function () {
                 if (quote.billingAddress() == null) {
                     return null;

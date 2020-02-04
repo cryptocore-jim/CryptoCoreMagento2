@@ -19,12 +19,12 @@
         <ccoresettings>
             <ccoresetup>
                 <title>Pay with CryptoCurrency</title>
+                <logo>https://gateway.ccore.online/images/logo32.png</logo>
                 <active>0</active>
                 <currentmode>test</currentmode>
                 <timeout>30</timeout>
+                <select_currency>1</select_currency>
                 <allowed>BTC</allowed>
-                <convert>1</convert>
-                <fiat>USD</fiat>
             </ccoresetup>
         </ccoresettings>
     </default>

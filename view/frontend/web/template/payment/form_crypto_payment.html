@@ -18,6 +18,7 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
+        <!-- ko if: (isSelectCurrency())-->
         <div class="field required">
             <label data-bind="attr: {for: getCode() + '_payment_information'}" class="label">
                 <b style="font-size: 16px"><!-- ko i18n: 'Select cryptocurrency to pay'--><!-- /ko --></b>
@@ -35,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <br />
+        <!-- /ko -->
         <br />
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->

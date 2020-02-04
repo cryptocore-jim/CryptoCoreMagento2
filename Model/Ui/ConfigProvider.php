@@ -47,26 +47,29 @@ final class ConfigProvider implements ConfigProviderInterface
         $this->_resolver = $resolver;
     }
 
-    private function getCryptoCoreLogo()
-    {
-        $logo = 'https://monitor.ccore.online/logo/logo32.png';
-        return $logo;
-    }
-
     public function getConfig()
     {
-        $cryptoAvailable = Array(
-            Array('value' => 'BTC_TST', 'text' => 'Bitcoin (Testnet)', 'amount' => 0.01),
-            Array('value' => 'OTO', 'text' => 'Otocash', 'amount' => 1.01)
-        );
+        $select_currency = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $logo = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/logo", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $allowed = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/allowed", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $curr = explode(",", $allowed);
+        $cryptoAvailable = array();
+        $default_crypto = '';
+        foreach($curr as $c) {
+            if ($default_crypto == '') {
+                $default_crypto = $c;
+            }
+            $cryptoAvailable[] =  Array('value' => $c, 'text' => 'FROM API', 'amount' => 0.01);
+        }
 
         return [
             'payment' => [
                 self::CODE_PAYMENT => [
                     'redirectUrl' => $this->methodInstanceCryptoCore->getConfigData('order_place_redirect_url'),
                     'cryptocurrencies' => $cryptoAvailable,
-                    'default_crypto' => "BTC_TST",
-                    'logo' => $this->getCryptoCoreLogo()
+                    'default_crypto' => $default_crypto,
+                    'logo' => $logo,
+                    'select_currency' => $select_currency
                 ]
             ]
         ];

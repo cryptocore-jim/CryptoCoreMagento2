@@ -36,7 +36,11 @@ class Startpayment extends Action
         $payment = $order->getPayment();
         $resultRedirect = $this->resultRedirectFactory->create();
         try {
-            $ccorder = $this->_dataHelper->createNewOrder($order, $payment->getAdditionalInformation('selected_crypto'));
+            $paymentCurrency = "";
+            if ($this->_dataHelper->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == 1) {
+                $paymentCurrency = $payment->getAdditionalInformation('selected_crypto');
+            }
+            $ccorder = $this->_dataHelper->createNewOrder($order, $paymentCurrency);
             $response = $this->_dataHelper->_communicator->sendRequest($ccorder,
                 $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
             if ((int)$response[0] == 200 && $response[1] != '') {

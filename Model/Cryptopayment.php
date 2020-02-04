@@ -100,24 +100,28 @@ class Cryptopayment extends \CryptoCore\CryptoPayment\Model\Cryptocorepayment
 
     public function assignData(\Magento\Framework\DataObject $data)
     {
-        $dataKey = $data->getDataByKey('additional_data');
-        $payment = $this->getInfoInstance();
-        $payment->setAdditionalInformation('selected_crypto', null);
-        if (isset($dataKey['selected_crypto'])) {
-            $payment->setAdditionalInformation('selected_crypto', $dataKey['selected_crypto']);
+        if ($this->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == 1) {
+            $dataKey = $data->getDataByKey('additional_data');
+            $payment = $this->getInfoInstance();
+            $payment->setAdditionalInformation('selected_crypto', null);
+            if (isset($dataKey['selected_crypto'])) {
+                $payment->setAdditionalInformation('selected_crypto', $dataKey['selected_crypto']);
+            }
+            $payment->setAdditionalInformation("webshop_profile_id", $this->getStore());
         }
-        $payment->setAdditionalInformation("webshop_profile_id", $this->getStore());
         return $this;
     }
 
     public function validate()
     {
-        $payment = $this->getInfoInstance();
-        $this->validateCustomFields($payment);
-        if ($payment->getAdditionalInformation('selected_crypto') == null) {
-            throw new LocalizedException(
-                __("Cryptocurrency not selected")
-            );
+        if ($this->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == 1) {
+            $payment = $this->getInfoInstance();
+            $this->validateCustomFields($payment);
+            if ($payment->getAdditionalInformation('selected_crypto') == null) {
+                throw new LocalizedException(
+                    __("Cryptocurrency not selected")
+                );
+            }
         }
         return $this;
     }
