@@ -66,6 +66,7 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_url = $url;
         $this->quoteRepository = $quoteRepository;
         $this->_communicator = $communicator;
+        $this->_originalOrderSender = $originalOrderSender;
     }
 
     function createNewOrder(\Magento\Sales\Model\Order $order, $selectedCrypto)

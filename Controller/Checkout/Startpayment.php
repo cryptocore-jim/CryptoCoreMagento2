@@ -46,6 +46,7 @@ class Startpayment extends Action
             if ((int)$response[0] == 200 && $response[1] != '') {
                 $ccpayment = json_decode($response[1]);
                 if (!empty($ccpayment->payment_id)) {
+                    $this->_dataHelper->_originalOrderSender->send($order);
                     $redirectUrl = $this->_dataHelper->_communicator->getRedirectUrl($ccpayment->payment_id);
                     $resultRedirect->setUrl($redirectUrl);
                 } else {
