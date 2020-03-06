@@ -55,13 +55,22 @@ final class ConfigProvider implements ConfigProviderInterface
         $curr = explode(",", $allowed);
         $cryptoAvailable = array();
         $default_crypto = '';
+        $quote = $this->_checkoutSession->getQuote();
+        $total = $quote->getGrandTotal();
+        $currency = $quote->getQuoteCurrencyCode();
+        $jsonString = file_get_contents("https://gateway.ccore.online/exchange.json?from=".$currency."&to=".$allowed);
+        $json = json_decode($jsonString, true);
         foreach($curr as $c) {
             if ($default_crypto == '') {
                 $default_crypto = $c;
             }
-            $cryptoAvailable[] =  Array('value' => $c, 'text' => 'FROM API', 'amount' => 0.01);
+            foreach($json as $js) {
+                if ($js["to"] == $c) {
+                    $cryptoAvailable[] =  Array('value' => $c, 'text' => $js["name"], 'amount' => $total * $js["rate"]);
+                    break;
+                }
+            }
         }
-
         return [
             'payment' => [
                 self::CODE_PAYMENT => [
