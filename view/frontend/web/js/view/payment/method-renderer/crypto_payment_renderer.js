@@ -2,11 +2,12 @@ define(
     [
         'ko',
         'Magento_Checkout/js/view/payment/default',
+        'Magento_Checkout/js/model/totals',
         'mage/url',
         'Magento_Checkout/js/model/quote',
         'jquery'
     ],
-    function (ko, Component, url, quote, jquery) {
+    function (ko, Component, totals, url, quote, jquery) {
         'use strict';
         return Component.extend({
             redirectAfterPlaceOrder: false,
@@ -21,6 +22,14 @@ define(
                         'selectedCrypto'
                     ]);
                 return this;
+            },
+
+            ccoreGetPureValue: function () {
+                if (totals.totals()) {
+                    return parseFloat(totals.getSegment('grand_total').value);
+                }
+
+                return 0;
             },
 
             afterPlaceOrder: function () {
@@ -74,7 +83,8 @@ define(
                         {
                             'value': value.value,
                             'label': value.text,
-                            'amount': value.amount
+                            'rate': parseFloat((value.rate * this.ccoreGetPureValue()).toFixed(8)),
+                            'logo': value.logo
                         }
                     );
                 }

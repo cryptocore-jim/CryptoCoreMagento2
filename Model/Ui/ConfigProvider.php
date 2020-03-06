@@ -58,15 +58,15 @@ final class ConfigProvider implements ConfigProviderInterface
         $quote = $this->_checkoutSession->getQuote();
         $total = $quote->getGrandTotal();
         $currency = $quote->getQuoteCurrencyCode();
-        $jsonString = file_get_contents("https://gateway.ccore.online/exchange.json?from=".$currency."&to=".$allowed);
+        $jsonString = file_get_contents("https://gateway.ccore.online/exchangerates?from=".$currency."&to=".$allowed);
         $json = json_decode($jsonString, true);
         foreach($curr as $c) {
             if ($default_crypto == '') {
                 $default_crypto = $c;
             }
             foreach($json as $js) {
-                if ($js["to"] == $c) {
-                    $cryptoAvailable[] =  Array('value' => $c, 'text' => $js["name"], 'amount' => $total * $js["rate"]);
+                if ($js["to_currency"] == $c && $currency == $js["from_currency"]) {
+                    $cryptoAvailable[] =  Array('value' => $c, 'text' => $js["name"], 'rate' => $js["rate"], 'logo' => $js["logo"]);
                     break;
                 }
             }
