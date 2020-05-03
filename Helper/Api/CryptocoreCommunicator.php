@@ -94,4 +94,8 @@ class CryptocoreCommunicator
     {
         return sha1($ccorder->currency_code . $ccorder->order_id . $ccorder->result_url . $ccorder->user_return_url . $ccorder->user_id . $ccorder->amount . $secrectKey);
     }
+    public function newExchangeSignature($userId, $secrectKey)
+    {
+        return sha1($userId . $secrectKey);
+    }
 }

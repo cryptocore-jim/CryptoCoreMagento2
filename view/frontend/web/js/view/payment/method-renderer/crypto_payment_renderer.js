@@ -79,11 +79,17 @@ define(
                 var list = [];
                 for (var i = 0; i < window.checkoutConfig.payment.crypto_payment.cryptocurrencies.length; i++) {
                     var value = window.checkoutConfig.payment.crypto_payment.cryptocurrencies[i];
+                    var rate;
+                    if (value.volatility == 0) {
+                        rate = parseFloat((value.rate * this.ccoreGetPureValue()).toFixed(value.decimals_amount))
+                    } else {
+                        rate = parseFloat((value.rate * this.ccoreGetPureValue() + (value.rate * this.ccoreGetPureValue() * value.volatility / 100)).toFixed(value.decimals_amount));
+                    }
                     list.push(
                         {
                             'value': value.value,
                             'label': value.text,
-                            'rate': parseFloat((value.rate * this.ccoreGetPureValue()).toFixed(8)),
+                            'rate':rate,
                             'logo': value.logo
                         }
                     );
