@@ -34,6 +34,7 @@
                         <img width="16px" height="16px" data-bind="attr:{src: logo}" />  <span data-bind="text: label"></span> (<span data-bind="text: rate"></span> <span data-bind="text: value"></span>)
                     </label><br />
                 </div>
+                <div data-bind="if: getCryptoCurencies().length == 0"><!-- ko i18n: 'No cryptocurrency found to pay'--><!-- /ko --></div>
             </div>
         </div>
         <!-- /ko -->
@@ -49,7 +50,7 @@
                         type="submit"
                         data-bind="
                         click: placeOrder,
-                        attr: {title: $t('Place Order'), disabled: (getBillingAddress() == null) ? 'disabled' : null }
+                        attr: {title: $t('Place Order'), disabled: (getBillingAddress() == null || (getCryptoCurencies().length == 0 && isSelectCurrency())) ? 'disabled' : null }
                         ">
                     <span data-bind="i18n: 'Place Order'"></span>
                 </button>
