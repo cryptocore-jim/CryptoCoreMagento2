@@ -49,11 +49,23 @@ class Startpayment extends Action
                     $redirectUrl = $this->_dataHelper->_communicator->getRedirectUrl($ccpayment->payment_id);
                     $resultRedirect->setUrl($redirectUrl);
                 } else {
-                    throw new \Exception("payment_id is empty");
-                }
 
+                    $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
+                    $error = __("Failed to create CryptoCore order. Payment id is empty. Please try again  later or use another payment method.");
+                    $order->registerCancellation($error)->save();
+                    $this->restoreQuote();
+                    $this->messageManager->addExceptionMessage(new \Exception("ex"), $error);
+                    $resultRedirect = $this->resultRedirectFactory->create();
+                    $resultRedirect->setPath('checkout/cart');
+                }
             } else {
-                throw new \Exception("Status response: " . $response[0]);
+                $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
+                $error = __("Failed to create CryptoCore order. Please try again later or use another payment method.");
+                $order->registerCancellation($error)->save();
+                $this->restoreQuote();
+                $this->messageManager->addExceptionMessage(new \Exception("ex"), $error);
+                $resultRedirect = $this->resultRedirectFactory->create();
+                $resultRedirect->setPath('checkout/cart');
             }
         } catch (\Exception $e) {
             $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
