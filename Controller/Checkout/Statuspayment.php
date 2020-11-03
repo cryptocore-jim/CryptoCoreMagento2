@@ -63,7 +63,7 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
             exit();
         }
         $result = $jsonData->result;
-        if ($result != "fail" && $result != "success") {
+        if ($result != "FAIL" && $result != "SUCCESS") {
             header('HTTP/1.0 403 Forbidden');
             exit();
         }
@@ -77,9 +77,9 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
                     header('HTTP/1.0 403 Forbidden');
                     exit();
                 }
-                if ($result == "fail") {
+                if ($result == "FAIL") {
                     $order->registerCancellation("Failed to pay with order")->save();
-                } else if ($result == "success") {
+                } else if ($result == "SUCCESS") {
                     $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
                     $order->setStatus("cryptocore_confirmed");
                     $order->save();
