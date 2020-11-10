@@ -72,6 +72,9 @@ final class ConfigProvider implements ConfigProviderInterface
         $jsonString = file_get_contents($url);
 
         $json = json_decode($jsonString, true);
+        if ($json == null || !is_array($json)) {
+            return [];
+        }
         foreach($curr as $c) {
             if ($default_crypto == '') {
                 $default_crypto = $c;

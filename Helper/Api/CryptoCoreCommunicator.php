@@ -2,7 +2,7 @@
 
 namespace CryptoCore\CryptoPayment\Helper\Api;
 
-class CryptocoreCommunicator
+class CryptoCoreCommunicator
 {
     private $server;
 

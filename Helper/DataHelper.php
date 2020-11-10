@@ -48,7 +48,7 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\ObjectManager\ConfigLoaderInterface $configLoader,
         \Magento\Customer\Api\CustomerMetadataInterface $customerMetadata,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \CryptoCore\CryptoPayment\Helper\Api\CryptocoreCommunicator $communicator
+        \CryptoCore\CryptoPayment\Helper\Api\CryptoCoreCommunicator $communicator
     )
     {
 
@@ -82,7 +82,7 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         $ccorder->order_id = $order->getIncrementId();
         $ccorder->result_url = $baseUrl."cryptocore/checkout/statuspayment";
         $ccorder->user_return_url = $baseUrl."cryptocore/checkout/finishpayment";
-        $ccorder->user_id = $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $ccorder->user_id = intval($this->_scopeConfig->getValue('ccoresettings/ccoresetup/userid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $signature = $cccommunicator->newOrderSignature($ccorder, $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $ccorder->usersignature = $signature;
         return json_encode($ccorder);
