@@ -55,16 +55,16 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
     }
 
     public function execute()
-    {
+    {		
         $post = $this->getRequest()->getContent();
         $jsonData = json_decode($post);
         if (empty($jsonData->result) || empty($jsonData->order_id) || empty($jsonData->signature)) {
-            header('HTTP/1.0 403 Forbidden');
+            $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_403);
             return;
         }
         $result = $jsonData->result;
         if ($result != "FAIL" && $result != "SUCCESS") {
-            header('HTTP/1.0 403 Forbidden');
+            $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_403);
             return;
         }
         $order_id = $jsonData->order_id;
@@ -74,7 +74,7 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
             $orderData = $this->getOrderIdByIncrementId($order_id);
             foreach ($orderData as $order) {
                 if ($order->getStatus() != "pending_cryptocore") {
-                    header('HTTP/1.0 403 Forbidden');
+                    $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_403);
                     return;
                 }
                 if ($result == "FAIL") {
@@ -90,11 +90,11 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
                     }
                 }
             }
-            header("HTTP/1.0 200 OK");
+            $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_200);
             return;
         }
         else {
-            header('HTTP/1.0 403 Forbidden');
+            $this->getResponse()->setStatusCode(\Zend\Http\Response::STATUS_CODE_403);
             return;
         }
     }
