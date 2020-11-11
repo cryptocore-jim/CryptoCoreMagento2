@@ -25,7 +25,7 @@ class CryptoCoreCommunicator
 
             $response = "";
             while (!feof($sslsock)) {
-                $response .= @fgets($sslsock, 128);
+                $response .= fgets($sslsock, 128);
             }
             fclose($sslsock);
             $resp = explode("\r\n\r\n", $response);

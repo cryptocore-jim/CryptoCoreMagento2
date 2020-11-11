@@ -30,7 +30,7 @@ class Startpayment extends Action
     {
         $order = $this->_dataHelper->_checkoutSession->getLastRealOrder();
         if ($order->getId() == null) {
-            exit();
+            return;
         }
         /* @var $payment \Magento\Sales\Model\Order\Payment */
         $payment = $order->getPayment();

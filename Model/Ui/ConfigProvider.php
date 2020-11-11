@@ -8,7 +8,7 @@ use Magento\Payment\Helper\Data as PaymentHelper;
 /**
  * Class ConfigProvider
  */
-final class ConfigProvider implements ConfigProviderInterface
+class ConfigProvider implements ConfigProviderInterface
 {
     protected $_resolver;
     const CODE_PAYMENT = 'crypto_payment';

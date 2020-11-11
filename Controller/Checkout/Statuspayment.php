@@ -49,7 +49,7 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
             }
         } catch (\Exception $exception)  {
             header('HTTP/1.0 403 Forbidden');
-            exit();
+            return;
         }
         return $orderData;
     }
@@ -60,12 +60,12 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
         $jsonData = json_decode($post);
         if (empty($jsonData->result) || empty($jsonData->order_id) || empty($jsonData->signature)) {
             header('HTTP/1.0 403 Forbidden');
-            exit();
+            return;
         }
         $result = $jsonData->result;
         if ($result != "FAIL" && $result != "SUCCESS") {
             header('HTTP/1.0 403 Forbidden');
-            exit();
+            return;
         }
         $order_id = $jsonData->order_id;
         $signature = $jsonData->signature;
@@ -75,7 +75,7 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
             foreach ($orderData as $order) {
                 if ($order->getStatus() != "pending_cryptocore") {
                     header('HTTP/1.0 403 Forbidden');
-                    exit();
+                    return;
                 }
                 if ($result == "FAIL") {
                     $order->registerCancellation("Failed to pay with order")->save();
@@ -91,11 +91,11 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
                 }
             }
             header("HTTP/1.0 200 OK");
-            exit();
+            return;
         }
         else {
             header('HTTP/1.0 403 Forbidden');
-            exit();
+            return;
         }
     }
 
