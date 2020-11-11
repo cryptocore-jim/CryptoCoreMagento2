@@ -4,7 +4,7 @@
     <menu>
         <add id="CryptoCore_CryptoPayment::main_menu" title="CryptoCore"
              module="CryptoCore_CryptoPayment" sortOrder="100"
-             resource="CryptoCore_CryptoPayment::simplenews" />
+             resource="CryptoCore_CryptoPayment::submenu" />
         <add id="CryptoCore_CryptoPayment::manage_configuration" title="CryptoCore Configuration"
              module="CryptoCore_CryptoPayment" sortOrder="1" parent="CryptoCore_CryptoPayment::main_menu"
              action="adminhtml/system_config/edit/section/ccoresettings" resource="CryptoCore_CryptoPayment::manage_configuration" />

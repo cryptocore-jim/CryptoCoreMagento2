@@ -23,12 +23,6 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
     public $_customerMetadata;
     public $_communicator;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    public $_loggerPsr;
-
-
     function saveLog()
     {
         //TODO: log
@@ -86,12 +80,5 @@ class DataHelper extends \Magento\Framework\App\Helper\AbstractHelper
         $signature = $cccommunicator->newOrderSignature($ccorder, $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE));
         $ccorder->usersignature = $signature;
         return json_encode($ccorder);
-    }
-
-    function nullToString($str) {
-        if (!isset($str)) {
-            return "";
-        }
-        return $str;
     }
 }

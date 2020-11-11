@@ -4,35 +4,6 @@ namespace CryptoCore\CryptoPayment\Helper\Api;
 
 class CryptoCoreCommunicator
 {
-    private $server;
-
-    /**
-     * @param mixed $server
-     */
-    public function setServer($server)
-    {
-        $this->server = $server;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getServer()
-    {
-        return $this->server;
-    }
-
-    function getResponseHeader($header, $response)
-    {
-        foreach ($response as $key => $r) {
-            // Match the header name up to ':', compare lower case
-            if (stripos($r, $header . ':') === 0) {
-                list($headername, $headervalue) = explode(":", $r, 2);
-                return trim($headervalue);
-            }
-        }
-    }
-
     public function sendRequest($xmlRequest, $timeout = 30)
     {
         $jsonResponse = "";
@@ -40,22 +11,12 @@ class CryptoCoreCommunicator
         if (intval($timeout) < 0) {
             $timeout = 30;
         }
-        if ($this->server == 'test') {
-            $sslsock = fsockopen("ssl://gateway.ccore.online", 443, $errno, $errstr, $timeout);
-        } else {
-            $sslsock = fsockopen("ssl://gateway.ccore.online", 443, $errno, $errstr, $timeout);
-        }
+        $sslsock = fsockopen("ssl://gateway.ccore.online", 443, $errno, $errstr, $timeout);
         if (is_resource($sslsock)) {
 
             $request_data = $xmlRequest;
             $request_length = strlen($request_data);
-
-            if ($this->server == 'test') {
-                fputs($sslsock, "POST /order/payment/new HTTP/1.0\r\n");
-            } else {
-                fputs($sslsock, "POST /order/payment/new HTTP/1.0\r\n");
-            }
-
+            fputs($sslsock, "POST /order/payment/new HTTP/1.0\r\n");
             fputs($sslsock, "Host: ccore.online\r\n");
             fputs($sslsock, "Content-type: application/json\r\n");
             fputs($sslsock, "Content-Length: " . $request_length . "\r\n");
