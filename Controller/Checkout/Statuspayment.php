@@ -83,7 +83,11 @@ class Statuspayment extends Action implements CsrfAwareActionInterface
                     $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
                     $order->setStatus("cryptocore_confirmed");
                     $order->save();
-                    $this->_dataHelper->_originalOrderSender->send($order);
+                    try {
+                        $this->_dataHelper->_originalOrderSender->send($order);
+                    } catch (\Exception $e) {
+
+                    }
                 }
             }
             header("HTTP/1.0 200 OK");
