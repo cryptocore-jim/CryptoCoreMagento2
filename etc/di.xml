@@ -1,11 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
-
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- Payment Method Facade configuration -->
@@ -13,6 +6,7 @@
         <arguments>
             <argument name="code" xsi:type="const">CryptoCore\CryptoPayment\Model\Ui\ConfigProvider::CODE_PAYMENT</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">CryptoCore\CryptoPayment\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">CryptoPaymentValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">CryptoPaymentCommandPool</argument>
         </arguments>
@@ -78,5 +72,11 @@
             <argument name="configInterface" xsi:type="object">CryptoPaymentConfig</argument>
         </arguments>
     </virtualType>
+
+    <type name="CryptoCore\CryptoPayment\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">CryptoPaymentConfig</argument>
+        </arguments>
+    </type>
 
 </config>
