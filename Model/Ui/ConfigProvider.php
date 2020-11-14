@@ -56,6 +56,10 @@ class ConfigProvider implements ConfigProviderInterface
 
     public function getConfig()
     {
+        $isAvailable = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/active", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if (!$isAvailable) {
+            return [];
+        }
         $select_currency = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $logo = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/logo", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $allowed = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/allowed", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
@@ -63,13 +67,19 @@ class ConfigProvider implements ConfigProviderInterface
         $cryptoAvailable = array();
         $default_crypto = '';
         $quote = $this->_checkoutSession->getQuote();
-        $total = $quote->getGrandTotal();
         $currency = $quote->getQuoteCurrencyCode();
         $userId = $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userid', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $secretKey = $this->_scopeConfig->getValue('ccoresettings/ccoresetup/userssecretkey', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if ($userId == null || $userId == '' || $secretKey == null || $secretKey == '') {
+            return [];
+        }
         $signature = $this->_dataHelper->_communicator->newExchangeSignature($userId, $secretKey);
         $url = "https://gateway.ccore.online/exchange/userrates?from=".$currency."&to=".$allowed."&userid=".$userId."&signature=".$signature;
-        $jsonString = file_get_contents($url);
+        try {
+            $jsonString = file_get_contents($url);
+        } catch (\Exception $e) {
+            return [];
+        }
 
         $json = json_decode($jsonString, true);
         if ($json == null || !is_array($json)) {

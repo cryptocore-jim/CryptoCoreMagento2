@@ -45,7 +45,7 @@ class Cryptocorepayment extends \Magento\Payment\Model\Method\Adapter
     /* @var $quote \Magento\Quote\Model\Quote */
     public function isAvailable(CartInterface $quote = null)
     {
-        return true;
+        return false;
     }
 
     /* @var $payment \Magento\Sales\Model\Order\Payment */
