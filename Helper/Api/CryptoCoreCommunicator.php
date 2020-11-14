@@ -8,8 +8,8 @@ class CryptoCoreCommunicator
     {
         $jsonResponse = "";
         $status = 0;
-        if (intval($timeout) < 0) {
-            $timeout = 30;
+        if (intval($timeout) < 10) {
+            $timeout = 10;
         }
         $sslsock = fsockopen("ssl://gateway.ccore.online", 443, $errno, $errstr, $timeout);
         if (is_resource($sslsock)) {

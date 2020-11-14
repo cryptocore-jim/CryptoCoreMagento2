@@ -75,6 +75,10 @@ class ConfigProvider implements ConfigProviderInterface
                 ]
             ];
         }
+        $timeout = $this->_dataHelper->_scopeConfig->getValue('ccoresettings/ccoresetup/timeout', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if (intval($timeout) < 10) {
+            $timeout = 10;
+        }
         $allowed = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/allowed", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $curr = explode(",", $allowed);
         $cryptoAvailable = array();
@@ -89,7 +93,12 @@ class ConfigProvider implements ConfigProviderInterface
         $signature = $this->_dataHelper->_communicator->newExchangeSignature($userId, $secretKey);
         $url = "https://gateway.ccore.online/exchange/userrates?from=".$currency."&to=".$allowed."&userid=".$userId."&signature=".$signature;
         try {
-            $jsonString = file_get_contents($url);
+            $ctx = stream_context_create(array('http'=>
+                array(
+                    'timeout' => $timeout,
+                )
+            ));
+            $jsonString = file_get_contents($url, false, $ctx);
         } catch (\Exception $e) {
             return [];
         }
