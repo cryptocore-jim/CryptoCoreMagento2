@@ -90,7 +90,6 @@ class Cryptopayment extends \CryptoCore\CryptoPayment\Model\Cryptocorepayment
 
     public function isAvailable(CartInterface $quote = null)
     {
-        return false;
         return $this->_scopeConfig->getValue("ccoresettings/ccoresetup/active", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
