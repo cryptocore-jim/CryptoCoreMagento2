@@ -62,6 +62,19 @@ class ConfigProvider implements ConfigProviderInterface
         }
         $select_currency = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/select_currency", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $logo = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/logo", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if ($select_currency == 0) {
+            return [
+                'payment' => [
+                    self::CODE_PAYMENT => [
+                        'redirectUrl' => $this->methodInstanceCryptoCore->getConfigData('order_place_redirect_url'),
+                        'cryptocurrencies' => [],
+                        'default_crypto' => '',
+                        'logo' => $logo,
+                        'select_currency' => $select_currency
+                    ]
+                ]
+            ];
+        }
         $allowed = $this->_scopeConfig->getValue("ccoresettings/ccoresetup/allowed", \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $curr = explode(",", $allowed);
         $cryptoAvailable = array();
